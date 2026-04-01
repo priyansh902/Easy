@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
 import '../models/j_char.dart';
-import 'quiz_screen.dart';
+import 'quiz.dart';
 import 'connect_dot.dart';
 
 enum ScriptType { hiragana, katakana, kanji }
