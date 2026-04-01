@@ -12,7 +12,7 @@ class NihongoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Easy — Learn Japanese',
+      title: 'Essy — Learn Japanese',
       theme: AppTheme.theme,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
