@@ -1,18 +1,67 @@
-# essy
+# essy — Learn Japanese 🇯🇵
 
-A new Flutter project.
+A simple, personal Japanese learning app built with Flutter.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **3 Scripts**: Hiragana (46), Katakana (46), Kanji JLPT N5 (~80)
+- **Mode 1 — Read & Type**: See a Japanese character → type the romaji on your keyboard
+- **Mode 2 — Connect & Draw**: See the English hint → drag to connect numbered dots and form the character
+- Clean white + red Japanese-flag inspired theme
 
-A few resources to get you started if this is your first Flutter project:
+## Setup
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### Prerequisites
+- Flutter SDK ≥ 3.0.0 — [Install Flutter](https://docs.flutter.dev/get-started/install)
+- An emulator or physical device
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# Easy" 
+### Run the app
+
+```bash
+# 1. Navigate into the project folder
+cd japanese_app
+
+# 2. Get dependencies
+flutter pub get
+
+# 3. Run on your device/emulator
+flutter run
+```
+
+### Build APK (Android)
+```bash
+flutter build apk --release
+```
+
+### Build for iOS
+```bash
+flutter build ios --release
+```
+
+## Project Structure
+
+```
+lib/
+├── main.dart                  # App entry point
+├── theme.dart                 # Colors & typography
+├── models/
+│   └── j_char.dart           # JChar & DotPoint models
+├── data/
+│   ├── hiragana_data.dart    # All 46 hiragana with dot coords
+│   ├── katakana_data.dart    # All 46 katakana with dot coords
+│   └── kanji_data.dart       # ~80 JLPT N5 kanji with dot coords
+└── screens/
+    ├── home_screen.dart       # Main menu
+    ├── script_screen.dart     # Mode selection per script
+    ├── quiz_screen.dart       # Read & Type quiz
+    └── connect_dots_screen.dart # Connect the dots drawing
+```
+
+## How Connect-the-Dots Works
+
+Each character has a list of `DotPoint` objects with:
+- `id`: dot number shown on screen
+- `x`, `y`: normalized position (0.0–1.0) on the canvas
+- `connectsTo`: the next dot id to connect to (-1 = end of stroke)
+
+Drag from one numbered dot to the next to form the character's strokes. Tap **Clear** to reset, **Show** to reveal the answer, or **Next** to move on.
