@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
 import '../models/j_char.dart';
-import 'script_screen.dart';
+import 'script.dart';
 
 class ConnectDotsScreen extends StatefulWidget {
   final List<JChar> chars;
