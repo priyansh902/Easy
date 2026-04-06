@@ -8,7 +8,6 @@ import '../data/kanji.dart';
 import '../models/j_char.dart';
 import '../data/kanji_db.dart' show allKanji;
 import 'script.dart';
-import 'study_plan.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
