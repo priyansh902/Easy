@@ -52,10 +52,10 @@ lib/
 │   ├── katakana.dart    # All 46 katakana with dot coords
 │   └── kanji.dart       # ~80 JLPT N5 kanji with dot coords
 └── screens/
-    ├── home_screen.dart       # Main menu
-    ├── script_screen.dart     # Mode selection per script
-    ├── quiz_screen.dart       # Read & Type quiz
-    └── connect_dots_screen.dart # Connect the dots drawing
+    ├── home.dart       # Main menu
+    ├── script.dart     # Mode selection per script
+    ├── quiz.dart       # Read & Type quiz
+    └── connect_dots.dart # Connect the dots drawing
 ```
 
 ## How Connect-the-Dots Works
