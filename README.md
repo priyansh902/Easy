@@ -48,9 +48,9 @@ lib/
 ├── models/
 │   └── j_char.dart           # JChar & DotPoint models
 ├── data/
-│   ├── hiragana_data.dart    # All 46 hiragana with dot coords
-│   ├── katakana_data.dart    # All 46 katakana with dot coords
-│   └── kanji_data.dart       # ~80 JLPT N5 kanji with dot coords
+│   ├── hiragana.dart    # All 46 hiragana with dot coords
+│   ├── katakana.dart    # All 46 katakana with dot coords
+│   └── kanji.dart       # ~80 JLPT N5 kanji with dot coords
 └── screens/
     ├── home_screen.dart       # Main menu
     ├── script_screen.dart     # Mode selection per script
