@@ -1,3 +1,4 @@
+import 'package:essy/screens/study_day.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
@@ -5,7 +6,9 @@ import '../data/hiragana.dart';
 import '../data/katakana.dart';
 import '../data/kanji.dart';
 import '../models/j_char.dart';
+import '../data/kanji_db.dart' show allKanji;
 import 'script.dart';
+import 'study_plan.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -55,6 +58,8 @@ class HomeScreen extends StatelessWidget {
                       scriptType: ScriptType.kanji,
                     ),
                     const Spacer(),
+                    const SizedBox(height: 14),
+                    _StudyPlanBanner(),
                     _buildFooter(),
                     const SizedBox(height: 16),
                   ],
@@ -96,7 +101,7 @@ class HomeScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Easy', style: GoogleFonts.playfairDisplay(
+              Text('Nihongo', style: GoogleFonts.playfairDisplay(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: AppTheme.ink,
@@ -250,6 +255,89 @@ class _ModeCard extends StatelessWidget {
                 ),
               ),
               Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.inkLight),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StudyPlanBanner extends StatelessWidget {
+  const _StudyPlanBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const StudyPlanScreen()),
+        ),
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1A1A2E), Color(0xFF2D1B4E)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1A1A2E).withOpacity(0.25),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    const Text('📚 ', style: TextStyle(fontSize: 16)),
+                    Text(
+                      'Kanji Study Plan',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ]),
+                  const SizedBox(height: 3),
+                  Text(
+                    '${allKanji.length} kanji · RTK + JLPT · 10–100/day',
+                    style: GoogleFonts.notoSans(
+                      fontSize: 12,
+                      color: Colors.white60,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 7),
+                decoration: BoxDecoration(
+                  color: AppTheme.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Start →',
+                  style: GoogleFonts.notoSans(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

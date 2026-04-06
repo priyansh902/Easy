@@ -35,7 +35,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
   // Dragging state
   int? _dragFromId;
   Offset? _dragCurrentPos;
-  List<_Connection> _userConnections = [];
+  final List<_Connection> _userConnections = [];
   final GlobalKey _canvasKey = GlobalKey();
 
   late AnimationController _successCtrl;
