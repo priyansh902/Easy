@@ -8,6 +8,7 @@ A simple, personal Japanese learning app built with Flutter.
 - **Mode 1 — Read & Type**: See a Japanese character → type the romaji on your keyboard
 - **Mode 2 — Connect & Draw**: See the English hint → drag to connect numbered dots and form the character
 - Clean white + red Japanese-flag inspired theme
+- **Study Planning- For learning kanji**: 3000 rtk kanji words for learning
 
 ## Setup
 
