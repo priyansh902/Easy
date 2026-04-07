@@ -50,7 +50,9 @@ lib/
 ├── data/
 │   ├── hiragana.dart    # All 46 hiragana with dot coords
 │   ├── katakana.dart    # All 46 katakana with dot coords
-│   └── kanji.dart       # ~80 JLPT N5 kanji with dot coords
+│   └── kanji.dart 
+|   |_ Kanji_db.dart    # All 3000 kanji words
+|   # ~80 JLPT N5 kanji with dot coords
 └── screens/
     ├── home.dart       # Main menu
     ├── script.dart     # Mode selection per script

@@ -1,853 +1,464 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
 import '../data/kanji_db.dart';
+import 'study_day.dart';
 
-class StudyDayScreen extends StatefulWidget {
-  final int dayNumber;
-  final List<KanjiEntry> kanji;
-  final Color accentColor;
-  final bool isCompleted;
-
-  const StudyDayScreen({
-    super.key,
-    required this.dayNumber,
-    required this.kanji,
-    required this.accentColor,
-    required this.isCompleted,
-  });
+class StudyPlanScreen extends StatefulWidget {
+  const StudyPlanScreen({super.key});
 
   @override
-  State<StudyDayScreen> createState() => _StudyDayScreenState();
+  State<StudyPlanScreen> createState() => _StudyPlanScreenState();
 }
 
-class _StudyDayScreenState extends State<StudyDayScreen> {
-  // View mode: grid or flashcard
-  bool _flashcardMode = false;
-  int _cardIndex = 0;
-  bool _flipped = false;
-  final Set<int> _mastered = {};
+class _StudyPlanScreenState extends State<StudyPlanScreen> {
+  int _perDay = 25;
+  final List<int> _paceOptions = [10, 25, 50, 100];
+  late List<List<KanjiEntry>> _plan;
+  // Track completed days (in-memory for now)
+  final Set<int> _completedDays = {};
 
-  // Grid filter
-  String _filter = 'all'; // all / mastered / remaining
-
-  String get _jlptLabel {
-    final levels = widget.kanji.map((k) => k.jlpt).toSet().toList()..sort();
-    if (levels.length == 1) {
-      final l = levels[0];
-      return l == 0 ? 'Beyond JLPT' : 'JLPT N$l';
-    }
-    return levels.map((l) => l == 0 ? 'N0' : 'N$l').join(' · ');
+  @override
+  void initState() {
+    super.initState();
+    _plan = buildDayPlan(_perDay);
   }
 
-  List<KanjiEntry> get _filteredKanji {
-    switch (_filter) {
-      case 'mastered':
-        return widget.kanji
-            .where((k) => _mastered.contains(widget.kanji.indexOf(k)))
-            .toList();
-      case 'remaining':
-        return widget.kanji
-            .where((k) => !_mastered.contains(widget.kanji.indexOf(k)))
-            .toList();
-      default:
-        return widget.kanji;
+  void _setPace(int pace) {
+    setState(() {
+      _perDay = pace;
+      _plan = buildDayPlan(pace);
+    });
+  }
+
+  // JLPT level color
+  Color _jlptColor(int level) {
+    switch (level) {
+      case 5: return const Color(0xFF2D8A4E);
+      case 4: return const Color(0xFF1565C0);
+      case 3: return const Color(0xFF6A1B9A);
+      case 2: return const Color(0xFFE65100);
+      case 1: return const Color(0xFFC62828);
+      default: return const Color(0xFF37474F);
     }
   }
 
-  void _flipCard() {
-    setState(() => _flipped = !_flipped);
-    HapticFeedback.selectionClick();
+  // Dominant JLPT level for a day
+  int _dominantLevel(List<KanjiEntry> day) {
+    final counts = <int, int>{};
+    for (final k in day) counts[k.jlpt] = (counts[k.jlpt] ?? 0) + 1;
+    return counts.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
   }
 
-  void _nextCard() {
-    setState(() {
-      _flipped = false;
-      _cardIndex = (_cardIndex + 1) % widget.kanji.length;
-    });
-  }
+  String _levelLabel(int level) =>
+      level == 0 ? 'Beyond JLPT' : 'JLPT N$level';
 
-  void _prevCard() {
-    setState(() {
-      _flipped = false;
-      _cardIndex =
-          (_cardIndex - 1 + widget.kanji.length) % widget.kanji.length;
-    });
-  }
-
-  void _toggleMastered(int idx) {
-    setState(() {
-      if (_mastered.contains(idx)) {
-        _mastered.remove(idx);
-      } else {
-        _mastered.add(idx);
-        HapticFeedback.lightImpact();
-      }
-    });
-  }
+  // Progress stats
+  int get _totalDays => _plan.length;
+  int get _doneDays => _completedDays.length;
+  int get _totalKanji => allKanji.length;
+  int get _learnedKanji =>
+      _completedDays.fold(0, (sum, d) => sum + _plan[d - 1].length);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: AppBar(
-        title: Text('Day ${widget.dayNumber}'),
+        title: const Text('Study Plan'),
         backgroundColor: AppTheme.white,
         foregroundColor: AppTheme.ink,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-          onPressed: () => Navigator.of(context).pop(
-            _mastered.length == widget.kanji.length,
-          ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(height: 1, color: AppTheme.border),
         ),
-        actions: [
-          // Toggle grid / flashcard
-          IconButton(
-            icon: Icon(
-              _flashcardMode ? Icons.grid_view_rounded : Icons.style_rounded,
-              size: 22,
-            ),
-            onPressed: () => setState(() {
-              _flashcardMode = !_flashcardMode;
-              _cardIndex = 0;
-              _flipped = false;
-            }),
-          ),
-          const SizedBox(width: 4),
-        ],
       ),
       body: Column(
         children: [
-          _buildDayHeader(),
-          Expanded(
-            child: _flashcardMode
-                ? _buildFlashcard()
-                : _buildGrid(),
-          ),
-          _buildBottomBar(),
+          _buildHeader(),
+          _buildPacePicker(),
+          _buildStats(),
+          Expanded(child: _buildDayList()),
         ],
       ),
     );
   }
 
-  Widget _buildDayHeader() {
-    final mastered = _mastered.length;
-    final total = widget.kanji.length;
-    final pct = total > 0 ? mastered / total : 0.0;
+  Widget _buildHeader() {
     return Container(
+      width: double.infinity,
       color: AppTheme.white,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: widget.accentColor.withOpacity(0.10),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  _jlptLabel,
-                  style: GoogleFonts.notoSans(
-                    fontSize: 11,
-                    color: widget.accentColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '$mastered / $total mastered',
-                style: GoogleFonts.notoSans(
-                    fontSize: 12, color: AppTheme.inkLight),
-              ),
-              const Spacer(),
-              if (mastered == total && total > 0)
-                Row(children: [
-                  const Icon(Icons.check_circle,
-                      color: AppTheme.success, size: 16),
-                  const SizedBox(width: 4),
-                  Text('Done!',
+              const Text('📚', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'All-in-One Kanji + RTK',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.ink,
+                      ),
+                    ),
+                    Text(
+                      '${allKanji.length} kanji · Heisig keywords · JLPT N5→N0',
                       style: GoogleFonts.notoSans(
-                          fontSize: 12,
-                          color: AppTheme.success,
-                          fontWeight: FontWeight.w600)),
-                ]),
+                          fontSize: 12, color: AppTheme.inkLight),
+                    ),
+                  ],
+                ),
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: pct,
-              backgroundColor: AppTheme.border,
-              valueColor:
-                  AlwaysStoppedAnimation(widget.accentColor),
-              minHeight: 5,
-            ),
           ),
         ],
       ),
     );
   }
 
-  // ── GRID MODE ───────────────────────────────────────────────
-
-  Widget _buildGrid() {
-    final kanji = widget.kanji;
-    final isKanjiHeavy = kanji.any((k) => k.jlpt <= 2);
-
-    return Column(
-      children: [
-        // Filter tabs
-        Container(
-          color: AppTheme.white,
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-          child: Row(
-            children: ['all', 'remaining', 'mastered'].map((f) {
-              final active = _filter == f;
-              return GestureDetector(
-                onTap: () => setState(() => _filter = f),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: active
-                        ? widget.accentColor
-                        : AppTheme.offWhite,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: active
-                            ? widget.accentColor
-                            : AppTheme.border),
-                  ),
-                  child: Text(
-                    f[0].toUpperCase() + f.substring(1),
-                    style: GoogleFonts.notoSans(
-                      fontSize: 12,
-                      color: active ? Colors.white : AppTheme.inkLight,
-                      fontWeight: FontWeight.w600,
+  Widget _buildPacePicker() {
+    return Container(
+      color: AppTheme.white,
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(height: 1, color: AppTheme.border),
+          const SizedBox(height: 12),
+          Text(
+            'Kanji per day',
+            style: GoogleFonts.notoSans(
+              fontSize: 12,
+              color: AppTheme.inkLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: _paceOptions.map((pace) {
+              final selected = pace == _perDay;
+              final days = (allKanji.length + pace - 1) ~/ pace;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => _setPace(pace),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppTheme.red
+                          : AppTheme.offWhite,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: selected
+                            ? AppTheme.red
+                            : AppTheme.border,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '$pace',
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: selected ? Colors.white : AppTheme.ink,
+                          ),
+                        ),
+                        Text(
+                          '${days}d',
+                          style: GoogleFonts.notoSans(
+                            fontSize: 10,
+                            color: selected
+                                ? Colors.white70
+                                : AppTheme.inkLight,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               );
             }).toList(),
           ),
-        ),
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(12),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: isKanjiHeavy ? 3 : 4,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              childAspectRatio: isKanjiHeavy ? 0.78 : 0.72,
-            ),
-            itemCount: _filteredKanji.length,
-            itemBuilder: (context, i) {
-              final k = _filteredKanji[i];
-              final globalIdx = widget.kanji.indexOf(k);
-              final isMastered = _mastered.contains(globalIdx);
-              return GestureDetector(
-                onTap: () => _showKanjiDetail(k, globalIdx),
-                onLongPress: () => _toggleMastered(globalIdx),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  decoration: BoxDecoration(
-                    color: isMastered
-                        ? AppTheme.successLight
-                        : AppTheme.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isMastered
-                          ? AppTheme.success.withOpacity(0.4)
-                          : AppTheme.border,
-                      width: isMastered ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 4, vertical: 8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Center(
-                              child: Text(
-                                k.k,
-                                style: GoogleFonts.notoSans(
-                                  fontSize: isKanjiHeavy ? 34 : 30,
-                                  color: isMastered
-                                      ? AppTheme.success
-                                      : widget.accentColor,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            if (isMastered)
-                              const Icon(Icons.check_circle,
-                                  size: 14, color: AppTheme.success),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          k.en.split(',')[0].trim(),
-                          style: GoogleFonts.notoSans(
-                            fontSize: 9.5,
-                            color: AppTheme.inkLight,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (k.on.isNotEmpty)
-                          Text(
-                            k.on.split('、')[0].trim(),
-                            style: GoogleFonts.notoSans(
-                              fontSize: 8.5,
-                              color: AppTheme.inkLight.withOpacity(0.6),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        if (k.frame != null)
-                          Text(
-                            '#${k.frame}',
-                            style: GoogleFonts.notoSans(
-                              fontSize: 7.5,
-                              color: widget.accentColor.withOpacity(0.5),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showKanjiDetail(KanjiEntry k, int idx) {
-    final isMastered = _mastered.contains(idx);
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => _KanjiDetailSheet(
-        k: k,
-        isMastered: isMastered,
-        accentColor: widget.accentColor,
-        onToggle: () {
-          _toggleMastered(idx);
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-
-  // ── FLASHCARD MODE ──────────────────────────────────────────
-
-  Widget _buildFlashcard() {
-    final k = widget.kanji[_cardIndex];
-    final isMastered = _mastered.contains(_cardIndex);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-      child: Column(
-        children: [
-          // Progress dots
-          Text(
-            'Card ${_cardIndex + 1} of ${widget.kanji.length}',
-            style: GoogleFonts.notoSans(
-                fontSize: 12, color: AppTheme.inkLight),
-          ),
-          const SizedBox(height: 16),
-          // The card
-          Expanded(
-            child: GestureDetector(
-              onTap: _flipCard,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                transitionBuilder: (child, anim) => ScaleTransition(
-                  scale: anim,
-                  child: child,
-                ),
-                child: _flipped
-                    ? _FlashcardBack(
-                        key: const ValueKey('back'),
-                        k: k,
-                        accentColor: widget.accentColor,
-                        isMastered: isMastered,
-                      )
-                    : _FlashcardFront(
-                        key: const ValueKey('front'),
-                        k: k,
-                        accentColor: widget.accentColor,
-                      ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Navigation row
-          Row(
-            children: [
-              IconButton(
-                onPressed: _prevCard,
-                icon: const Icon(Icons.arrow_back_ios_new),
-                style: IconButton.styleFrom(
-                  backgroundColor: AppTheme.white,
-                  foregroundColor: AppTheme.ink,
-                  side: const BorderSide(color: AppTheme.border),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    _toggleMastered(_cardIndex);
-                    _nextCard();
-                  },
-                  icon: Icon(
-                    isMastered ? Icons.close : Icons.check,
-                    size: 18,
-                  ),
-                  label: Text(isMastered ? 'Unmark' : 'Got it!'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isMastered ? AppTheme.border : AppTheme.success,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 13),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    elevation: 0,
-                    textStyle: GoogleFonts.notoSans(
-                        fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              IconButton(
-                onPressed: _nextCard,
-                icon: const Icon(Icons.arrow_forward_ios),
-                style: IconButton.styleFrom(
-                  backgroundColor: AppTheme.white,
-                  foregroundColor: AppTheme.ink,
-                  side: const BorderSide(color: AppTheme.border),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Tap card to flip  ·  Long-press grid cells to mark mastered',
-            style: GoogleFonts.notoSans(
-                fontSize: 10, color: AppTheme.inkLight),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomBar() {
-    final allDone = _mastered.length == widget.kanji.length;
+  Widget _buildStats() {
+    final pct =
+        _totalKanji > 0 ? _learnedKanji / _totalKanji : 0.0;
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
-      color: AppTheme.white,
-      child: ElevatedButton.icon(
-        onPressed: () => Navigator.of(context).pop(allDone),
-        icon: Icon(
-            allDone ? Icons.check_circle : Icons.arrow_back,
-            size: 18),
-        label: Text(allDone
-            ? 'Mark Day ${widget.dayNumber} Complete ✓'
-            : 'Back to Plan'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              allDone ? AppTheme.success : widget.accentColor,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 48),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 0,
-          textStyle: GoogleFonts.notoSans(
-              fontSize: 14, fontWeight: FontWeight.w600),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Flashcard widgets ──────────────────────────────────────────
-
-class _FlashcardFront extends StatelessWidget {
-  final KanjiEntry k;
-  final Color accentColor;
-  const _FlashcardFront({super.key, required this.k, required this.accentColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppTheme.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppTheme.border),
-        boxShadow: [
-          BoxShadow(
-              color: accentColor.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 6)),
-        ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            k.k,
-            style: GoogleFonts.notoSans(
-              fontSize: 120,
-              color: accentColor,
-              fontWeight: FontWeight.w300,
+          Row(
+            children: [
+              _StatChip(
+                  label: 'Learned',
+                  value: '$_learnedKanji',
+                  color: AppTheme.success),
+              const SizedBox(width: 10),
+              _StatChip(
+                  label: 'Remaining',
+                  value: '${_totalKanji - _learnedKanji}',
+                  color: AppTheme.inkLight),
+              const SizedBox(width: 10),
+              _StatChip(
+                  label: 'Days done',
+                  value: '$_doneDays / $_totalDays',
+                  color: AppTheme.red),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: pct,
+              backgroundColor: AppTheme.border,
+              valueColor:
+                  const AlwaysStoppedAnimation(AppTheme.success),
+              minHeight: 6,
             ),
           ),
-          if (k.frame != null)
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              decoration: BoxDecoration(
-                color: accentColor.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'RTK #${k.frame}',
-                style: GoogleFonts.notoSans(
-                    fontSize: 12, color: accentColor),
-              ),
-            ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 4),
           Text(
-            'Tap to reveal',
+            '${(pct * 100).toStringAsFixed(1)}% complete',
             style: GoogleFonts.notoSans(
-                fontSize: 13, color: AppTheme.inkLight),
+                fontSize: 11, color: AppTheme.inkLight),
           ),
         ],
       ),
     );
   }
-}
 
-class _FlashcardBack extends StatelessWidget {
-  final KanjiEntry k;
-  final Color accentColor;
-  final bool isMastered;
-  const _FlashcardBack(
-      {super.key,
-      required this.k,
-      required this.accentColor,
-      required this.isMastered});
+  Widget _buildDayList() {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      itemCount: _plan.length,
+      itemBuilder: (context, idx) {
+        final day = _plan[idx];
+        final dayNum = idx + 1;
+        final level = _dominantLevel(day);
+        final color = _jlptColor(level);
+        final isDone = _completedDays.contains(dayNum);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: isMastered ? AppTheme.successLight : AppTheme.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isMastered
-              ? AppTheme.success.withOpacity(0.4)
-              : AppTheme.border,
-          width: isMastered ? 2 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-              color: accentColor.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 6)),
-        ],
-      ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              k.k,
-              style: GoogleFonts.notoSans(
-                fontSize: 72,
-                color: isMastered ? AppTheme.success : accentColor,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Heisig keyword — the mnemonic anchor
-            if (k.kw.isNotEmpty) ...[
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 6),
+        // Preview: first 5 kanji
+        final preview = day.take(5).map((k) => k.k).join('  ');
+
+        // Category summary
+        final catMap = <String, int>{};
+        for (final k in day) {
+          final c = k.cat.split('_')[0].trim();
+          catMap[c] = (catMap[c] ?? 0) + 1;
+        }
+        final topCats = (catMap.entries.toList()
+              ..sort((a, b) => b.value - a.value))
+            .take(2)
+            .map((e) => e.key)
+            .join(', ');
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () async {
+                final completed = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StudyDayScreen(
+                      dayNumber: dayNum,
+                      kanji: day,
+                      accentColor: color,
+                      isCompleted: isDone,
+                    ),
+                  ),
+                );
+                if (completed == true) {
+                  setState(() => _completedDays.add(dayNum));
+                } else if (completed == false) {
+                  setState(() => _completedDays.remove(dayNum));
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  '"${k.kw}"',
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: accentColor,
-                    fontStyle: FontStyle.italic,
+                  color: isDone
+                      ? AppTheme.successLight
+                      : AppTheme.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDone
+                        ? AppTheme.success.withOpacity(0.35)
+                        : AppTheme.border,
                   ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Heisig keyword',
-                style: GoogleFonts.notoSans(
-                    fontSize: 10, color: AppTheme.inkLight),
-              ),
-            ],
-            const SizedBox(height: 16),
-            // Meaning
-            Text(
-              k.en,
-              style: GoogleFonts.notoSans(
-                fontSize: 14,
-                color: AppTheme.ink,
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 14),
-            _ReadingRow(label: 'On', value: k.on, color: accentColor),
-            const SizedBox(height: 6),
-            _ReadingRow(label: 'Kun', value: k.kun, color: accentColor),
-            const SizedBox(height: 14),
-            // JLPT + category
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _Pill(
-                  text: k.jlpt == 0 ? 'Beyond JLPT' : 'N${k.jlpt}',
-                  color: accentColor,
+                child: Row(
+                  children: [
+                    // Day number badge
+                    Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: isDone
+                            ? AppTheme.success
+                            : color.withOpacity(0.10),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: isDone
+                          ? const Icon(Icons.check_rounded,
+                              color: Colors.white, size: 22)
+                          : Column(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '$dayNum',
+                                  style: GoogleFonts.playfairDisplay(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: color,
+                                  ),
+                                ),
+                                Text(
+                                  'day',
+                                  style: GoogleFonts.notoSans(
+                                    fontSize: 8,
+                                    color: color.withOpacity(0.7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.10),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  _levelLabel(level),
+                                  style: GoogleFonts.notoSans(
+                                    fontSize: 10,
+                                    color: color,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${day.length} kanji',
+                                style: GoogleFonts.notoSans(
+                                  fontSize: 11,
+                                  color: AppTheme.inkLight,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                categoryIcon(topCats.toLowerCase()),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            preview,
+                            style: GoogleFonts.notoSans(
+                              fontSize: 18,
+                              color: isDone
+                                  ? AppTheme.success
+                                  : AppTheme.ink,
+                              fontWeight: FontWeight.w500,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            topCats,
+                            style: GoogleFonts.notoSans(
+                              fontSize: 11,
+                              color: AppTheme.inkLight,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.arrow_forward_ios,
+                        size: 14, color: AppTheme.inkLight),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                _Pill(
-                  text: categoryIcon(k.cat.toLowerCase()) +
-                      ' ' +
-                      k.cat.split('_')[0],
-                  color: AppTheme.inkLight,
-                ),
-              ],
+              ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
-class _ReadingRow extends StatelessWidget {
-  final String label, value;
+class _StatChip extends StatelessWidget {
+  final String label;
+  final String value;
   final Color color;
-  const _ReadingRow(
+  const _StatChip(
       {required this.label, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    if (value.isEmpty) return const SizedBox();
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 32,
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.10),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Center(
-            child: Text(label,
-                style: GoogleFonts.notoSans(
-                    fontSize: 9,
-                    color: color,
-                    fontWeight: FontWeight.w700)),
-          ),
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(8),
         ),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            value,
-            style: GoogleFonts.notoSans(
-                fontSize: 13, color: AppTheme.ink),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Pill extends StatelessWidget {
-  final String text;
-  final Color color;
-  const _Pill({required this.text, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.notoSans(
-            fontSize: 11, color: color, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-}
-
-// ── Kanji detail bottom sheet ──────────────────────────────────
-
-class _KanjiDetailSheet extends StatelessWidget {
-  final KanjiEntry k;
-  final bool isMastered;
-  final Color accentColor;
-  final VoidCallback onToggle;
-
-  const _KanjiDetailSheet({
-    required this.k,
-    required this.isMastered,
-    required this.accentColor,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: AppTheme.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Kanji big
-              Text(
-                k.k,
-                style: GoogleFonts.notoSans(
-                  fontSize: 80,
-                  color: accentColor,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              // Heisig keyword
-              if (k.kw.isNotEmpty) ...[
-                Text(
-                  '"${k.kw}"',
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 22,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(value,
+                style: GoogleFonts.playfairDisplay(
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: accentColor,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                if (k.frame != null)
-                  Text(
-                    'RTK Frame #${k.frame}',
-                    style: GoogleFonts.notoSans(
-                        fontSize: 11, color: AppTheme.inkLight),
-                  ),
-              ],
-              const SizedBox(height: 12),
-              Text(
-                k.en,
+                    color: color)),
+            Text(label,
                 style: GoogleFonts.notoSans(
-                  fontSize: 14,
-                  color: AppTheme.ink,
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              if (k.on.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: _ReadingRow(
-                      label: 'On', value: k.on, color: accentColor),
-                ),
-              if (k.kun.isNotEmpty)
-                _ReadingRow(
-                    label: 'Kun', value: k.kun, color: accentColor),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _Pill(
-                    text: k.jlpt == 0 ? 'Beyond JLPT' : 'N${k.jlpt}',
-                    color: accentColor,
-                  ),
-                  const SizedBox(width: 8),
-                  _Pill(
-                    text: categoryIcon(k.cat.toLowerCase()) +
-                        ' ' +
-                        k.cat.split('_')[0],
-                    color: AppTheme.inkLight,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: onToggle,
-                icon: Icon(
-                  isMastered ? Icons.close : Icons.check,
-                  size: 18,
-                ),
-                label:
-                    Text(isMastered ? 'Remove mastered' : 'Mark mastered'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      isMastered ? AppTheme.border : AppTheme.success,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 46),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  elevation: 0,
-                ),
-              ),
-            ],
-          ),
+                    fontSize: 10, color: AppTheme.inkLight)),
+          ],
         ),
       ),
     );

@@ -1,4 +1,5 @@
-import 'package:essy/screens/study_day.dart';
+
+import 'package:essy/screens/study_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
@@ -100,7 +101,7 @@ class HomeScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Nihongo', style: GoogleFonts.playfairDisplay(
+              Text('Essy', style: GoogleFonts.playfairDisplay(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: AppTheme.ink,
