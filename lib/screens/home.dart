@@ -1,5 +1,5 @@
 
-import 'package:essy/screens/study_plan.dart';
+import 'package:essy/screens/particle.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
@@ -9,69 +9,73 @@ import '../data/kanji.dart';
 import '../models/j_char.dart';
 import '../data/kanji_db.dart' show allKanji;
 import 'script.dart';
+import 'study_plan.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import '../data/particles.dart' show particleList;
+import '../services/progress.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.offWhite,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    _ModeCard(
-                      japanese: 'ひらがな',
-                      label: 'Hiragana',
-                      subtitle: '${hiraganaList.length} characters',
-                      emoji: '🌸',
-                      color: AppTheme.red,
-                      chars: hiraganaList,
-                      scriptType: ScriptType.hiragana,
-                    ),
-                    const SizedBox(height: 14),
-                    _ModeCard(
-                      japanese: 'カタカナ',
-                      label: 'Katakana',
-                      subtitle: '${katakanaList.length} characters',
-                      emoji: '⚡',
-                      color: const Color(0xFF1A1A2E),
-                      chars: katakanaList,
-                      scriptType: ScriptType.katakana,
-                    ),
-                    const SizedBox(height: 14),
-                    _ModeCard(
-                      japanese: '漢字',
-                      label: 'Kanji',
-                      subtitle: '${kanjiList.length} JLPT N5 characters',
-                      emoji: '🏯',
-                      color: const Color(0xFF6B3A2A),
-                      chars: kanjiList,
-                      scriptType: ScriptType.kanji,
-                    ),
-                    const Spacer(),
-                    const SizedBox(height: 14),
-                    _StudyPlanBanner(),
-                    _buildFooter(),
-                    const SizedBox(height: 16),
-                  ],
+  class HomeScreen extends StatelessWidget {
+    const HomeScreen({super.key});
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        backgroundColor: AppTheme.offWhite,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: SingleChildScrollView(  // Wrap with SingleChildScrollView
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      _ModeCard(
+                        japanese: 'ひらがな',
+                        label: 'Hiragana',
+                        subtitle: '${hiraganaList.length} characters',
+                        emoji: '🌸',
+                        color: AppTheme.red,
+                        chars: hiraganaList,
+                        scriptType: ScriptType.hiragana,
+                      ),
+                      const SizedBox(height: 14),
+                      _ModeCard(
+                        japanese: 'カタカナ',
+                        label: 'Katakana',
+                        subtitle: '${katakanaList.length} characters',
+                        emoji: '⚡',
+                        color: const Color(0xFF1A1A2E),
+                        chars: katakanaList,
+                        scriptType: ScriptType.katakana,
+                      ),
+                      const SizedBox(height: 14),
+                      _ModeCard(
+                        japanese: '漢字',
+                        label: 'Kanji',
+                        subtitle: '${kanjiList.length} JLPT N5 characters',
+                        emoji: '🏯',
+                        color: const Color(0xFF6B3A2A),
+                        chars: kanjiList,
+                        scriptType: ScriptType.kanji,
+                      ),
+                      const SizedBox(height: 14),
+                      const _ParticlesCard(),
+                      const SizedBox(height: 14),  // Removed Spacer()
+                      const _StudyPlanBanner(),
+                      _buildFooter(),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
+      );
+    }
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
@@ -94,6 +98,7 @@ class HomeScreen extends StatelessWidget {
                 fontSize: 22,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                
               )),
             ),
           ),
@@ -223,6 +228,7 @@ class _ModeCard extends StatelessWidget {
                     fontSize: 30,
                     color: color,
                     fontWeight: FontWeight.bold,
+                    // fontFamilyFallback: const ['NotoSansCJK','NotoSansJP','sans-serif'],
                   )),
                 ),
               ),
@@ -263,19 +269,44 @@ class _ModeCard extends StatelessWidget {
   }
 }
 
-class _StudyPlanBanner extends StatelessWidget {
+class _StudyPlanBanner extends StatefulWidget {
   const _StudyPlanBanner();
+  @override
+  State<_StudyPlanBanner> createState() => _StudyPlanBannerState();
+}
+
+class _StudyPlanBannerState extends State<_StudyPlanBanner> {
+  int _mastered = 0;
+  int _completed = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  void _loadStats() {
+    final store = ProgressStore.instance;
+    setState(() {
+      _mastered  = store.totalMasteredKanji;
+      _completed = store.completedDays.length;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final pct = allKanji.isNotEmpty ? _mastered / allKanji.length : 0.0;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const StudyPlanScreen()),
-        ),
+        onTap: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const StudyPlanScreen()),
+          );
+          _loadStats(); // refresh on return
+        },
         child: Container(
           width: double.infinity,
           margin: const EdgeInsets.only(bottom: 12),
@@ -295,53 +326,176 @@ class _StudyPlanBanner extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Row(children: [
-                    const Text('📚 ', style: TextStyle(fontSize: 16)),
-                    Text(
-                      'Kanji Study Plan',
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        const Text('📚 ', style: TextStyle(fontSize: 16)),
+                        Text(
+                          'Kanji Study Plan',
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ]),
+                      const SizedBox(height: 3),
+                      Text(
+                        _mastered > 0
+                            ? '$_mastered / ${allKanji.length} mastered · $_completed days done'
+                            : '${allKanji.length} kanji · RTK + JLPT · 10–100/day',
+                        style: GoogleFonts.notoSans(
+                          fontSize: 12,
+                          color: Colors.white60,
+                        ),
                       ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: AppTheme.red,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ]),
-                  const SizedBox(height: 3),
-                  Text(
-                    '${allKanji.length} kanji · RTK + JLPT · 10–100/day',
-                    style: GoogleFonts.notoSans(
-                      fontSize: 12,
-                      color: Colors.white60,
+                    child: Text(
+                      _mastered > 0 ? 'Continue →' : 'Start →',
+                      style: GoogleFonts.notoSans(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 7),
-                decoration: BoxDecoration(
-                  color: AppTheme.red,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'Start →',
-                  style: GoogleFonts.notoSans(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+              if (_mastered > 0) ...[
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    backgroundColor: Colors.white12,
+                    valueColor: const AlwaysStoppedAnimation(AppTheme.success),
+                    minHeight: 5,
                   ),
                 ),
-              ),
+                const SizedBox(height: 4),
+                Text(
+                  '${(pct * 100).toStringAsFixed(1)}% of all kanji mastered',
+                  style: GoogleFonts.notoSans(
+                      fontSize: 10, color: Colors.white38),
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
   }
+}
+
+class _ParticlesCard extends StatelessWidget {
+  const _ParticlesCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ParticlesScreen()),
+        ),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.border),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.red.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: AppTheme.red.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(13),
+                  border: Border.all(color: AppTheme.red.withOpacity(0.18)),
+                ),
+                child: Center(
+                  child: Text('は',
+                      style: AppTheme.kanjiStyle(
+                          fontSize: 24, color: AppTheme.red,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Text('✦ ', style: TextStyle(color: AppTheme.red, fontSize: 13)),
+                      Text('Particles',
+                          style: GoogleFonts.playfairDisplay(
+                              fontSize: 17, fontWeight: FontWeight.w700,
+                              color: AppTheme.ink)),
+                    ]),
+                    const SizedBox(height: 3),
+                    Text(
+                      '${particleList.length} particles · は が を に で の も と や から',
+                      style: GoogleFonts.notoSans(
+                          fontSize: 12, color: AppTheme.inkLight),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(children: [
+                      _Tag('15 examples each'),
+                      const SizedBox(width: 6),
+                      _Tag('15 quiz questions each'),
+                    ]),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios,
+                  size: 15, color: AppTheme.inkLight),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Tag extends StatelessWidget {
+  final String label;
+  const _Tag(this.label);
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+    decoration: BoxDecoration(
+        color: AppTheme.red.withOpacity(0.07),
+        borderRadius: BorderRadius.circular(5)),
+    child: Text(label,
+        style: GoogleFonts.notoSans(
+            fontSize: 9.5, color: AppTheme.red.withOpacity(0.8),
+            fontWeight: FontWeight.w500)),
+  );
 }
