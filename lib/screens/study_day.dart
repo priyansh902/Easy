@@ -1685,8 +1685,9 @@ class _StudyDayScreenState extends State<StudyDayScreen>
 
   void _toggleMastered(int idx) {
     setState(() {
-      if (_mastered.contains(idx)) _mastered.remove(idx);
-      else { _mastered.add(idx); HapticFeedback.lightImpact(); }
+      if (_mastered.contains(idx)) {
+        _mastered.remove(idx);
+      } else { _mastered.add(idx); HapticFeedback.lightImpact(); }
     });
     // Persist immediately to local storage
     ProgressStore.instance.saveMasteredForDay(widget.dayNumber, _mastered);
@@ -1863,8 +1864,11 @@ class _StudyDayScreenState extends State<StudyDayScreen>
       body: GestureDetector(
         onTap: () {
           if (_mode == _ViewMode.quiz) {
-            if (!_romajiPassed) _romajiFocus.requestFocus();
-            else _englishFocus.requestFocus();
+            if (!_romajiPassed) {
+              _romajiFocus.requestFocus();
+            } else {
+              _englishFocus.requestFocus();
+            }
           }
         },
         child: Column(
