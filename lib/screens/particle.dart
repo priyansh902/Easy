@@ -44,7 +44,7 @@ class ParticlesScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                         '${particleList.length} particles · 15 examples + 15 quiz questions each',
-                        style: GoogleFonts.notoSans(
+                        style: GoogleFonts.notoSansJp(
                             fontSize: 12, color: AppTheme.inkLight)),
                   ],
                 ),
@@ -125,7 +125,7 @@ class _ParticleCard extends StatelessWidget {
                   children: [
                     Row(children: [
                       Text(particle.reading,
-                          style: GoogleFonts.notoSans(
+                          style: GoogleFonts.notoSansJp(
                               fontSize: 14, color: AppTheme.red,
                               fontWeight: FontWeight.w700)),
                       const SizedBox(width: 8),
@@ -137,14 +137,14 @@ class _ParticleCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(color: AppTheme.border)),
                         child: Text(particle.role,
-                            style: GoogleFonts.notoSans(
+                            style: GoogleFonts.notoSansJp(
                                 fontSize: 10, color: AppTheme.inkLight,
                                 fontWeight: FontWeight.w500)),
                       ),
                     ]),
                     const SizedBox(height: 4),
                     Text(particle.explanation,
-                        style: GoogleFonts.notoSans(
+                        style: GoogleFonts.notoSansJp(
                             fontSize: 11.5, color: AppTheme.inkLight,
                             height: 1.4),
                         maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -179,7 +179,7 @@ class _MiniTag extends StatelessWidget {
     child: Row(mainAxisSize: MainAxisSize.min, children: [
       Icon(icon, size: 11, color: AppTheme.red.withOpacity(0.7)),
       const SizedBox(width: 3),
-      Text(label, style: GoogleFonts.notoSans(
+      Text(label, style: GoogleFonts.notoSansJp(
           fontSize: 10, color: AppTheme.red.withOpacity(0.8),
           fontWeight: FontWeight.w500)),
     ]),
@@ -221,7 +221,7 @@ class _ParticleDetailScreenState extends State<ParticleDetailScreen>
                   color: AppTheme.red, fontWeight: FontWeight.w600)),
           const SizedBox(width: 8),
           Text('(${p.reading})',
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                   fontSize: 15, color: AppTheme.ink,
                   fontWeight: FontWeight.w600)),
         ]),
@@ -238,7 +238,7 @@ class _ParticleDetailScreenState extends State<ParticleDetailScreen>
           unselectedLabelColor: AppTheme.inkLight,
           indicatorColor: AppTheme.red,
           indicatorWeight: 2.5,
-          labelStyle: GoogleFonts.notoSans(
+          labelStyle: GoogleFonts.notoSansJp(
               fontSize: 13, fontWeight: FontWeight.w600),
           tabs: const [
             Tab(text: '📖  Learn'),
@@ -288,18 +288,18 @@ class _LearnTab extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(particle.reading,
-                        style: GoogleFonts.notoSans(
+                        style: GoogleFonts.notoSansJp(
                             fontSize: 16, color: AppTheme.red,
                             fontWeight: FontWeight.w700)),
                     Text(particle.role,
-                        style: GoogleFonts.notoSans(
+                        style: GoogleFonts.notoSansJp(
                             fontSize: 12, color: AppTheme.inkLight)),
                   ],
                 ),
               ]),
               const SizedBox(height: 12),
               Text(particle.explanation,
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       fontSize: 13.5, color: AppTheme.ink, height: 1.6)),
               const SizedBox(height: 10),
               Container(
@@ -313,7 +313,7 @@ class _LearnTab extends StatelessWidget {
                     const Text('💡 ', style: TextStyle(fontSize: 14)),
                     Expanded(
                       child: Text(particle.tip,
-                          style: GoogleFonts.notoSans(
+                          style: GoogleFonts.notoSansJp(
                               fontSize: 12.5, color: AppTheme.ink,
                               fontStyle: FontStyle.italic, height: 1.5)),
                     ),
@@ -373,7 +373,7 @@ class _ExampleCardState extends State<_ExampleCard> {
                 shape: BoxShape.circle),
             child: Center(
               child: Text('${widget.number}',
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       fontSize: 11, color: AppTheme.red,
                       fontWeight: FontWeight.w700)),
             ),
@@ -386,11 +386,11 @@ class _ExampleCardState extends State<_ExampleCard> {
                 const SizedBox(height: 4),
                 if (_showReading)
                   Text(widget.example.reading,
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                           fontSize: 11, color: AppTheme.inkLight)),
                 const SizedBox(height: 4),
                 Text(widget.example.english,
-                    style: GoogleFonts.notoSans(
+                    style: GoogleFonts.notoSansJp(
                         fontSize: 13, color: AppTheme.inkLight,
                         fontStyle: FontStyle.italic)),
               ],
@@ -405,7 +405,7 @@ class _ExampleCardState extends State<_ExampleCard> {
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: AppTheme.border)),
               child: Text(_showReading ? 'Hide' : 'Reading',
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       fontSize: 9, color: AppTheme.inkLight)),
             ),
           ),
@@ -556,10 +556,10 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
           // Progress
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Q ${_index + 1} / ${_shuffled.length}',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 12, color: AppTheme.inkLight)),
             Text('$_correct / $_total ✓',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 12, color: AppTheme.red,
                     fontWeight: FontWeight.w700)),
           ]),
@@ -613,7 +613,7 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
               child: Column(children: [
                 // Instruction
                 Text('Fill in the blank with the correct particle:',
-                    style: GoogleFonts.notoSans(
+                    style: GoogleFonts.notoSansJp(
                         fontSize: 12, color: AppTheme.inkLight)),
                 const SizedBox(height: 14),
                 // Question sentence with blank
@@ -621,7 +621,7 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
                 const SizedBox(height: 12),
                 // English translation
                 Text(_current.english,
-                    style: GoogleFonts.notoSans(
+                    style: GoogleFonts.notoSansJp(
                         fontSize: 13, color: AppTheme.inkLight,
                         fontStyle: FontStyle.italic)),
                 const SizedBox(height: 14),
@@ -642,7 +642,7 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
                   )
                 else
                   Text('Type the particle (hiragana or romaji)',
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                           fontSize: 12, color: AppTheme.inkLight)),
               ]),
             ),
@@ -657,11 +657,11 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
             enabled: _state == _State.idle,
             textCapitalization: TextCapitalization.none,
             onSubmitted: (_) => _submit(),
-            style: GoogleFonts.notoSans(fontSize: 20, color: AppTheme.ink),
+            style: GoogleFonts.notoSansJp(fontSize: 20, color: AppTheme.ink),
             textAlign: TextAlign.center,
             decoration: InputDecoration(
               hintText: 'は / が / を / に …',
-              hintStyle: GoogleFonts.notoSans(
+              hintStyle: GoogleFonts.notoSansJp(
                   color: AppTheme.inkLight, fontSize: 14),
               filled: true,
               fillColor: _state == _State.correct
@@ -715,14 +715,14 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
                       horizontal: 28, vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  textStyle: GoogleFonts.notoSans(
+                  textStyle: GoogleFonts.notoSansJp(
                       fontSize: 14, fontWeight: FontWeight.w600)),
             )
           else if (_state == _State.idle)
             TextButton(
               onPressed: _next,
               child: Text('Skip',
-                  style: GoogleFonts.notoSans(color: AppTheme.inkLight)),
+                  style: GoogleFonts.notoSansJp(color: AppTheme.inkLight)),
             ),
         ]),
       ),
@@ -765,7 +765,7 @@ class _QuizTabState extends State<_QuizTab> with TickerProviderStateMixin {
                 : _state == _State.wrong
                     ? _current.answer
                     : '  ?  ',
-            style: GoogleFonts.notoSans(
+            style: GoogleFonts.notoSansJp(
                 fontSize: 18,
                 color: _state == _State.correct
                     ? AppTheme.success
@@ -795,7 +795,7 @@ class _Feedback extends StatelessWidget {
     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Icon(icon, color: color, size: 18),
       const SizedBox(width: 6),
-      Text(text, style: GoogleFonts.notoSans(
+      Text(text, style: GoogleFonts.notoSansJp(
           color: color, fontWeight: FontWeight.w700, fontSize: 14)),
     ]),
     const SizedBox(height: 4),

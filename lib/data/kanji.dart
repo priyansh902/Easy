@@ -371,7 +371,7 @@ const List<JChar> kanjiList = [
     DotPoint(id: 12, x: 0.50, y: 0.72, connectsTo: 13),
     DotPoint(id: 13, x: 0.50, y: 0.85, connectsTo: -1),
   ]),
-  JChar(japanese: '先', romaji: 'saki', meaning: 'ahead', dots: [
+  JChar(japanese: '先', romaji: 'sen', meaning: 'ahead / before', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.30, connectsTo: 2),
     DotPoint(id: 2, x: 0.80, y: 0.30, connectsTo: -1),
     DotPoint(id: 3, x: 0.50, y: 0.15, connectsTo: 4),
@@ -419,7 +419,7 @@ const List<JChar> kanjiList = [
   ]),
 
   // ── Actions / Verbs ──
-  JChar(japanese: '見', romaji: 'mi', meaning: 'see', dots: [
+  JChar(japanese: '見', romaji: 'ken', meaning: 'see / look', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.28, connectsTo: 2),
     DotPoint(id: 2, x: 0.80, y: 0.28, connectsTo: -1),
     DotPoint(id: 3, x: 0.22, y: 0.50, connectsTo: 4),
@@ -435,7 +435,7 @@ const List<JChar> kanjiList = [
     DotPoint(id: 13, x: 0.72, y: 0.70, connectsTo: 14),
     DotPoint(id: 14, x: 0.78, y: 0.85, connectsTo: -1),
   ]),
-  JChar(japanese: '行', romaji: 'iku', meaning: 'go', dots: [
+  JChar(japanese: '行', romaji: 'kou', meaning: 'go / journey', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.28, connectsTo: 2),
     DotPoint(id: 2, x: 0.80, y: 0.28, connectsTo: -1),
     DotPoint(id: 3, x: 0.50, y: 0.15, connectsTo: 4),
@@ -445,7 +445,7 @@ const List<JChar> kanjiList = [
     DotPoint(id: 7, x: 0.25, y: 0.72, connectsTo: 8),
     DotPoint(id: 8, x: 0.75, y: 0.72, connectsTo: -1),
   ]),
-  JChar(japanese: '来', romaji: 'kuru', meaning: 'come', dots: [
+  JChar(japanese: '来', romaji: 'rai', meaning: 'come / next', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.28, connectsTo: 2),
     DotPoint(id: 2, x: 0.80, y: 0.28, connectsTo: -1),
     DotPoint(id: 3, x: 0.50, y: 0.15, connectsTo: 4),
@@ -472,7 +472,7 @@ const List<JChar> kanjiList = [
     DotPoint(id: 12, x: 0.65, y: 0.58, connectsTo: 13),
     DotPoint(id: 13, x: 0.72, y: 0.82, connectsTo: -1),
   ]),
-  JChar(japanese: '書', romaji: 'kaki', meaning: 'write', dots: [
+  JChar(japanese: '書', romaji: 'sho', meaning: 'write / document', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.22, connectsTo: 2),
     DotPoint(id: 2, x: 0.80, y: 0.22, connectsTo: -1),
     DotPoint(id: 3, x: 0.20, y: 0.40, connectsTo: 4),
@@ -490,7 +490,7 @@ const List<JChar> kanjiList = [
     DotPoint(id: 15, x: 0.75, y: 0.52, connectsTo: 16),
     DotPoint(id: 16, x: 0.75, y: 0.80, connectsTo: -1),
   ]),
-  JChar(japanese: '読', romaji: 'yomi', meaning: 'read', dots: [
+  JChar(japanese: '読', romaji: 'doku', meaning: 'read', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.22, connectsTo: 2),
     DotPoint(id: 2, x: 0.44, y: 0.22, connectsTo: -1),
     DotPoint(id: 3, x: 0.20, y: 0.45, connectsTo: 4),
@@ -508,7 +508,7 @@ const List<JChar> kanjiList = [
     DotPoint(id: 15, x: 0.72, y: 0.55, connectsTo: 16),
     DotPoint(id: 16, x: 0.80, y: 0.80, connectsTo: -1),
   ]),
-  JChar(japanese: '言', romaji: 'iu', meaning: 'say', dots: [
+  JChar(japanese: '言', romaji: 'gen', meaning: 'say / word', dots: [
     DotPoint(id: 1, x: 0.20, y: 0.22, connectsTo: 2),
     DotPoint(id: 2, x: 0.80, y: 0.22, connectsTo: -1),
     DotPoint(id: 3, x: 0.20, y: 0.40, connectsTo: 4),
@@ -760,13 +760,13 @@ const List<JChar> kanjiList = [
     DotPoint(id: 10, x: 0.25, y: 0.62, connectsTo: 11),
     DotPoint(id: 11, x: 0.75, y: 0.62, connectsTo: -1),
   ]),
-  JChar(japanese: '入', romaji: 'hairu', meaning: 'enter', dots: [
+  JChar(japanese: '入', romaji: 'nyuu', meaning: 'enter / insert', dots: [
     DotPoint(id: 1, x: 0.50, y: 0.18, connectsTo: 2),
     DotPoint(id: 2, x: 0.25, y: 0.80, connectsTo: -1),
     DotPoint(id: 3, x: 0.50, y: 0.35, connectsTo: 4),
     DotPoint(id: 4, x: 0.75, y: 0.80, connectsTo: -1),
   ]),
-  JChar(japanese: '出', romaji: 'deru', meaning: 'exit', dots: [
+  JChar(japanese: '出', romaji: 'shutsu', meaning: 'exit / leave', dots: [
     DotPoint(id: 1, x: 0.50, y: 0.15, connectsTo: 2),
     DotPoint(id: 2, x: 0.50, y: 0.80, connectsTo: -1),
     DotPoint(id: 3, x: 0.30, y: 0.38, connectsTo: 4),

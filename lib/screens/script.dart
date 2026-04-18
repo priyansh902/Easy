@@ -62,7 +62,7 @@ class ScriptScreen extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 'How do you want to practice today?',
-                style: GoogleFonts.notoSans(fontSize: 14, color: AppTheme.inkLight),
+                style: GoogleFonts.notoSansJp(fontSize: 14, color: AppTheme.inkLight),
               ),
               const SizedBox(height: 28),
               _ModeOptionCard(
@@ -128,7 +128,7 @@ class ScriptScreen extends StatelessWidget {
             children: [
               Text(
                 'Characters in this set',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                   fontSize: 13,
                   color: AppTheme.inkLight,
                   fontWeight: FontWeight.w600,
@@ -143,7 +143,7 @@ class ScriptScreen extends StatelessWidget {
                 ),
                 child: Text(
                   '${chars.length} total',
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                     fontSize: 11,
                     color: color,
                     fontWeight: FontWeight.w600,
@@ -176,7 +176,7 @@ class ScriptScreen extends StatelessWidget {
                   children: [
                     Text(
                       c.japanese,
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                         fontSize: isKanji ? 28 : 30,
                         color: color,
                         fontWeight: FontWeight.w500,
@@ -185,7 +185,7 @@ class ScriptScreen extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       c.romaji,
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                         fontSize: 10,
                         color: AppTheme.inkLight,
                         fontWeight: FontWeight.w500,
@@ -196,7 +196,7 @@ class ScriptScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: Text(
                           c.meaning,
-                          style: GoogleFonts.notoSans(
+                          style: GoogleFonts.notoSansJp(
                             fontSize: 8.5,
                             color: AppTheme.inkLight.withOpacity(0.7),
                           ),
@@ -281,7 +281,7 @@ class _ModeOptionCard extends StatelessWidget {
                     ),
                     Text(
                       subtitle,
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                         fontSize: 12,
                         color: color,
                         fontWeight: FontWeight.w600,
@@ -290,7 +290,7 @@ class _ModeOptionCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                         fontSize: 12.5,
                         color: AppTheme.inkLight,
                         height: 1.35,

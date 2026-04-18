@@ -255,7 +255,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             child: Center(
               child: Text(
                 '$_correct / $_total',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     color: widget.accentColor,
                     fontWeight: FontWeight.w700,
                     fontSize: 15),
@@ -310,10 +310,10 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Card ${_index + 1} of ${_shuffled.length}',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 12, color: AppTheme.inkLight)),
             Text('${(pct * 100).round()}%',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 12,
                     color: widget.accentColor,
                     fontWeight: FontWeight.w600)),
@@ -434,7 +434,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     if (_romajiField == _Field.idle) {
       return Text(
         isKanji ? 'Type the romaji reading' : 'Type the romaji',
-        style: GoogleFonts.notoSans(fontSize: 13, color: AppTheme.inkLight),
+        style: GoogleFonts.notoSansJp(fontSize: 13, color: AppTheme.inkLight),
       );
     }
 
@@ -449,7 +449,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
               const SizedBox(width: 5),
               Text(
                 '${_current.romaji}  ✓',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     color: AppTheme.success,
                     fontWeight: FontWeight.w600,
                     fontSize: 14),
@@ -458,7 +458,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 6),
           Text('Now type the English meaning',
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                   fontSize: 13, color: AppTheme.inkLight)),
         ],
       );
@@ -483,7 +483,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 4),
           Text('${_current.romaji}  ·  ${_current.meaning}',
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                   fontSize: 12,
                   color: AppTheme.success.withOpacity(0.8))),
         ],
@@ -500,7 +500,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
               const Icon(Icons.close, color: AppTheme.red, size: 18),
               const SizedBox(width: 5),
               Text('Not quite!',
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       color: AppTheme.red,
                       fontWeight: FontWeight.w600,
                       fontSize: 14)),
@@ -517,11 +517,11 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             child: Column(
               children: [
                 Text('Romaji: ${_current.romaji}',
-                    style: GoogleFonts.notoSans(
+                    style: GoogleFonts.notoSansJp(
                         fontSize: 12, color: AppTheme.inkLight)),
                 const SizedBox(height: 2),
                 Text('English: ${_current.meaning}',
-                    style: GoogleFonts.notoSans(
+                    style: GoogleFonts.notoSansJp(
                         fontSize: 13,
                         color: AppTheme.red,
                         fontWeight: FontWeight.w600)),
@@ -542,7 +542,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
               const Icon(Icons.close, color: AppTheme.red, size: 18),
               const SizedBox(width: 5),
               Text('Romaji: ${_current.romaji}',
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       color: AppTheme.red,
                       fontWeight: FontWeight.w600,
                       fontSize: 14)),
@@ -550,7 +550,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 4),
           Text('Try again or skip',
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                   fontSize: 12, color: AppTheme.inkLight)),
         ],
       );
@@ -624,7 +624,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             onPressed: _nextCard,
             icon: const Icon(Icons.arrow_forward_rounded),
             label: Text('Next card',
-                style: GoogleFonts.notoSans(fontWeight: FontWeight.w600)),
+                style: GoogleFonts.notoSansJp(fontWeight: FontWeight.w600)),
             style: TextButton.styleFrom(foregroundColor: AppTheme.inkLight),
           ),
         ],
@@ -645,7 +645,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
               _romajiFocus.requestFocus();
             },
             child: Text('Retry',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     color: AppTheme.inkLight,
                     fontWeight: FontWeight.w600)),
           ),
@@ -654,7 +654,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             onPressed: _skip,
             child: Text('Skip',
                 style:
-                    GoogleFonts.notoSans(color: AppTheme.inkLight)),
+                    GoogleFonts.notoSansJp(color: AppTheme.inkLight)),
           ),
         ],
       );
@@ -664,7 +664,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     return TextButton(
       onPressed: _skip,
       child: Text('Skip',
-          style: GoogleFonts.notoSans(color: AppTheme.inkLight)),
+          style: GoogleFonts.notoSansJp(color: AppTheme.inkLight)),
     );
   }
 
@@ -694,7 +694,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                             color: AppTheme.ink)),
                   ),
                   Text('${widget.chars.length}',
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                           fontSize: 12, color: AppTheme.inkLight)),
                 ],
               ),
@@ -707,13 +707,13 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                   _LegendDot(color: AppTheme.success),
                   const SizedBox(width: 4),
                   Text('Correct',
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                           fontSize: 10, color: AppTheme.inkLight)),
                   const SizedBox(width: 12),
                   _LegendDot(color: AppTheme.red.withOpacity(0.5)),
                   const SizedBox(width: 4),
                   Text('Practiced',
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                           fontSize: 10, color: AppTheme.inkLight)),
                 ],
               ),
@@ -772,7 +772,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                     : FontWeight.w500,
                               )),
                           Text(c.romaji,
-                              style: GoogleFonts.notoSans(
+                              style: GoogleFonts.notoSansJp(
                                   fontSize: 8,
                                   color: AppTheme.inkLight)),
                         ],
@@ -842,7 +842,7 @@ class _StepDot extends StatelessWidget {
         ),
         const SizedBox(height: 3),
         Text(label,
-            style: GoogleFonts.notoSans(
+            style: GoogleFonts.notoSansJp(
                 fontSize: 9,
                 color: labelColor,
                 fontWeight: active || state != _Field.idle
@@ -916,7 +916,7 @@ class _InputField extends StatelessWidget {
               ),
               child: Text(
                 label,
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 10,
                     color: Colors.white,
                     fontWeight: FontWeight.w700),
@@ -925,7 +925,7 @@ class _InputField extends StatelessWidget {
             if (fieldState == _Field.correct) ...[
               const SizedBox(width: 6),
               Text(controller.text,
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       fontSize: 12,
                       color: AppTheme.success,
                       fontWeight: FontWeight.w600)),
@@ -941,14 +941,14 @@ class _InputField extends StatelessWidget {
           textCapitalization: TextCapitalization.none,
           keyboardType: TextInputType.text,
           onSubmitted: (_) => onSubmit(),
-          style: GoogleFonts.notoSans(
+          style: GoogleFonts.notoSansJp(
               fontSize: 18,
               color: fieldState == _Field.wrong ? AppTheme.red : AppTheme.ink,
               letterSpacing: 0.5),
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.notoSans(
+            hintStyle: GoogleFonts.notoSansJp(
                 color: AppTheme.inkLight, fontSize: 14),
             filled: true,
             fillColor: _fillColor,

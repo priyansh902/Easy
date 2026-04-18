@@ -26,7 +26,7 @@ class KanjiEntry {
 const List<KanjiEntry> allKanji = [
   KanjiEntry('一','one','イチ、イツ','ひと-、ひと.つ','ひと・いち','hito / ichi',5,1,1,'one','Counting','一人','ひとり','one person alone','一番','いちばん','best'),
   KanjiEntry('二','two','ニ、ジ','ふた、ふた.つ、ふたたび','ふた・に','futa / ni',5,1,2,'two','Counting','二','に','two','二階建て','にかいだて','two-storied building'),
-  KanjiEntry('三','three','サン、ゾウ','み、み.つ、みっ.つ','み・さん','mi / san',5,1,3,'three','Counting','三','さん','three tri-','三味線','しゃみせん','three-stringed Japanese guitar'),
+  KanjiEntry('三','three','サン','み、み.つ、みっ.つ','み・さん','mi / san',5,1,3,'three','Counting','三','さん','three tri-','三味線','しゃみせん','three-stringed Japanese guitar'),
   KanjiEntry('四','four','シ','よ、よ.つ、よっ.つ、よん','よ・し','yo / shi',5,1,4,'four','Counting','四','し','four','四捨五入','ししゃごにゅう','rounding half up (i.e. fractions)'),
   KanjiEntry('五','five','ゴ','いつ、いつ.つ','いつ・ご','itsu / go',5,1,null,'five','Counting','五','ご','five','五日','いつか','the fifth day of the month five days'),
   KanjiEntry('六','six','ロク、リク','む、む.つ、むっ.つ、むい','む・ろく','mu / roku',5,1,6,'six','Counting','六','ろく','six','','',''),
@@ -55,7 +55,7 @@ const List<KanjiEntry> allKanji = [
   KanjiEntry('目','eye, class, look, insight, experience, care,','モク、ボク','め、-め、ま-','め・もく・ぼく','me / moku / boku',5,1,15,'eye','Body_Head Neck','目','め','eye','課目','かもく','(school) subject'),
   KanjiEntry('手','hand','シュ、ズ','て、て-、-て、た-','て・しゅ','te / shu',5,1,637,'hand','Body_Arm Leg','手続','てつづき','procedure','手引','てびき','guidance'),
   KanjiEntry('見','see, hopes, chances, idea, opinion, look at,','ケン','み.る、み.える、み.せる','み・けん','mi / ken',5,1,57,'see','Emotion Sense_Sense','見付かる','みつかる','to be found','意見','いけん','opinion'),
-  KanjiEntry('気','spirit, mind','キ、ケ','いき','いき・き・け','iki / ki / ke',5,1,1885,'spirit','Nature_Sky','気','き','spirit','景気','けいき','condition'),
+  KanjiEntry('気','spirit, mind','キ、ケ','き','き・け','ki / ke',5,1,1885,'spirit','Nature_Sky','気','き','spirit','景気','けいき','condition'),
   KanjiEntry('円','circle, yen, round','エン','まる.い、まる、まど、まど.か、まろ.やか','まる・えん','maru / en',5,1,1811,'circle','Physical Properties_Shape Size','円い','まるい','round','円滑','えんかつ','smooth'),
   KanjiEntry('入','enter, insert','ニュウ、ジュ','い.る、-い.る、-い.り、い.れる、-い.れ、はい.る','い・にゅう・じゅ','i / nyuu / ju',5,1,779,'enter','Directions','入口','いりぐち','entrance','購入','こうにゅう','purchase'),
   KanjiEntry('出','exit, leave','シュツ、スイ','で.る、-で、だ.す、-だ.す、い.でる、い.だす','で・しゅつ・すい','de / shutsu / sui',5,1,767,'exit','Directions','出生','しゅっせい','birth','出合う','であう','to meet (by chance)'),

@@ -21,7 +21,7 @@
 //           background: offWhite,
 //         ),
 //         scaffoldBackgroundColor: offWhite,
-//         textTheme: GoogleFonts.notoSansTextTheme().copyWith(
+//         textTheme: GoogleFonts.notoSansJpTextTheme().copyWith(
 //           displayLarge: GoogleFonts.playfairDisplay(
 //             fontSize: 32,
 //             fontWeight: FontWeight.w700,
@@ -32,8 +32,8 @@
 //             fontWeight: FontWeight.w600,
 //             color: ink,
 //           ),
-//           bodyLarge: GoogleFonts.notoSans(fontSize: 16, color: ink),
-//           bodyMedium: GoogleFonts.notoSans(fontSize: 14, color: inkLight),
+//           bodyLarge: GoogleFonts.notoSansJp(fontSize: 16, color: ink),
+//           bodyMedium: GoogleFonts.notoSansJp(fontSize: 14, color: inkLight),
 //         ),
 //         appBarTheme: AppBarTheme(
 //           backgroundColor: white,
@@ -86,13 +86,13 @@ class AppTheme {
           background: offWhite,
         ),
         scaffoldBackgroundColor: offWhite,
-        textTheme: GoogleFonts.notoSansTextTheme().copyWith(
+        textTheme: GoogleFonts.notoSansJpTextTheme().copyWith(
           displayLarge: GoogleFonts.playfairDisplay(
               fontSize: 32, fontWeight: FontWeight.w700, color: ink),
           titleLarge: GoogleFonts.playfairDisplay(
               fontSize: 22, fontWeight: FontWeight.w600, color: ink),
-          bodyLarge:  GoogleFonts.notoSans(fontSize: 16, color: ink),
-          bodyMedium: GoogleFonts.notoSans(fontSize: 14, color: inkLight),
+          bodyLarge:  GoogleFonts.notoSansJp(fontSize: 16, color: ink),
+          bodyMedium: GoogleFonts.notoSansJp(fontSize: 14, color: inkLight),
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: white,

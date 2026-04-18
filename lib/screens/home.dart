@@ -14,24 +14,43 @@ import 'study_plan.dart';
 import '../data/particles.dart' show particleList;
 import '../services/progress.dart';
 
-  class HomeScreen extends StatelessWidget {
-    const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        backgroundColor: AppTheme.offWhite,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              Expanded(
-                child: SingleChildScrollView(  // Wrap with SingleChildScrollView
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 8),
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    ProgressStore.instance.addListener(_onProgress);
+  }
+
+  @override
+  void dispose() {
+    ProgressStore.instance.removeListener(_onProgress);
+    super.dispose();
+  }
+
+  void _onProgress() => setState(() {});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.offWhite,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    const _ReminderBanner(),
                       _ModeCard(
                         japanese: 'ひらがな',
                         label: 'Hiragana',
@@ -94,7 +113,7 @@ import '../services/progress.dart';
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Text('日', style: GoogleFonts.notoSans(
+              child: Text('日', style: GoogleFonts.notoSansJp(
                 fontSize: 22,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -111,7 +130,7 @@ import '../services/progress.dart';
                 fontWeight: FontWeight.w700,
                 color: AppTheme.ink,
               )),
-              Text('Learn Japanese', style: GoogleFonts.notoSans(
+              Text('Learn Japanese', style: GoogleFonts.notoSansJp(
                 fontSize: 13,
                 color: AppTheme.inkLight,
               )),
@@ -125,7 +144,7 @@ import '../services/progress.dart';
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppTheme.red.withOpacity(0.2)),
             ),
-            child: Text('N5', style: GoogleFonts.notoSans(
+            child: Text('N5', style: GoogleFonts.notoSansJp(
               fontSize: 12,
               color: AppTheme.red,
               fontWeight: FontWeight.w600,
@@ -151,7 +170,7 @@ import '../services/progress.dart';
           Expanded(
             child: Text(
               'Each script has two modes: read in Japanese or write by connecting dots.',
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                 fontSize: 12.5,
                 color: AppTheme.inkLight,
                 height: 1.4,
@@ -224,7 +243,7 @@ class _ModeCard extends StatelessWidget {
                   border: Border.all(color: color.withOpacity(0.15)),
                 ),
                 child: Center(
-                  child: Text(japanese[0], style: GoogleFonts.notoSans(
+                  child: Text(japanese[0], style: GoogleFonts.notoSansJp(
                     fontSize: 30,
                     color: color,
                     fontWeight: FontWeight.bold,
@@ -248,12 +267,12 @@ class _ModeCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 2),
-                    Text(japanese, style: GoogleFonts.notoSans(
+                    Text(japanese, style: GoogleFonts.notoSansJp(
                       fontSize: 13,
                       color: color.withOpacity(0.7),
                     )),
                     const SizedBox(height: 6),
-                    Text(subtitle, style: GoogleFonts.notoSans(
+                    Text(subtitle, style: GoogleFonts.notoSansJp(
                       fontSize: 12,
                       color: AppTheme.inkLight,
                     )),
@@ -350,7 +369,7 @@ class _StudyPlanBannerState extends State<_StudyPlanBanner> {
                         _mastered > 0
                             ? '$_mastered / ${allKanji.length} mastered · $_completed days done'
                             : '${allKanji.length} kanji · RTK + JLPT · 10–100/day',
-                        style: GoogleFonts.notoSans(
+                        style: GoogleFonts.notoSansJp(
                           fontSize: 12,
                           color: Colors.white60,
                         ),
@@ -367,7 +386,7 @@ class _StudyPlanBannerState extends State<_StudyPlanBanner> {
                     ),
                     child: Text(
                       _mastered > 0 ? 'Continue →' : 'Start →',
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                         fontSize: 12,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -390,7 +409,7 @@ class _StudyPlanBannerState extends State<_StudyPlanBanner> {
                 const SizedBox(height: 4),
                 Text(
                   '${(pct * 100).toStringAsFixed(1)}% of all kanji mastered',
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                       fontSize: 10, color: Colors.white38),
                 ),
               ],
@@ -462,7 +481,7 @@ class _ParticlesCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       '${particleList.length} particles · は が を に で の も と や から',
-                      style: GoogleFonts.notoSans(
+                      style: GoogleFonts.notoSansJp(
                           fontSize: 12, color: AppTheme.inkLight),
                     ),
                     const SizedBox(height: 5),
@@ -494,8 +513,176 @@ class _Tag extends StatelessWidget {
         color: AppTheme.red.withOpacity(0.07),
         borderRadius: BorderRadius.circular(5)),
     child: Text(label,
-        style: GoogleFonts.notoSans(
+        style: GoogleFonts.notoSansJp(
             fontSize: 9.5, color: AppTheme.red.withOpacity(0.8),
             fontWeight: FontWeight.w500)),
   );
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reminder Banner — shown on home when user hasn't studied today
+// ─────────────────────────────────────────────────────────────────────────────
+class _ReminderBanner extends StatelessWidget {
+  const _ReminderBanner();
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inDays >= 2) return '${diff.inDays} days ago';
+    if (diff.inDays == 1) return 'yesterday';
+    if (diff.inHours >= 1) return '${diff.inHours}h ago';
+    return 'a little while ago';
+  }
+
+  String _streakEmoji(int streak) {
+    if (streak >= 30) return '🔥🔥🔥';
+    if (streak >= 14) return '🔥🔥';
+    if (streak >= 7)  return '🔥';
+    if (streak >= 3)  return '⚡';
+    return '✨';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final store   = ProgressStore.instance;
+    final remind  = store.shouldRemind;
+    final studied = store.studiedToday;
+    final dayNum  = store.lastStudiedDayNum;
+    final last    = store.lastStudiedDate;
+    final streak  = store.streakDays;
+
+    // Nothing to show if never studied
+    if (dayNum == 0) return const SizedBox.shrink();
+
+    if (studied) {
+      // ── Already studied today — show a small congrats chip ──
+      return Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppTheme.successLight,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.success.withOpacity(0.35)),
+        ),
+        child: Row(
+          children: [
+            Text(_streakEmoji(streak),
+                style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Great job! You studied today 🎉',
+                    style: GoogleFonts.notoSansJp(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.success,
+                    ),
+                  ),
+                  if (streak > 1)
+                    Text(
+                      '$streak-day streak — keep it up!',
+                      style: GoogleFonts.notoSansJp(
+                          fontSize: 11, color: AppTheme.success.withOpacity(0.75)),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (remind) {
+      // ── Reminder — hasn't studied today ──
+      final timeStr = last != null ? _timeAgo(last) : '';
+      return GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const StudyPlanScreen()),
+        ),
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFF6B35), Color(0xFFBC002D)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.red.withOpacity(0.25),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Text('⏰', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Time to study! 📖',
+                      style: GoogleFonts.notoSansJp(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'You last studied Day $dayNum — $timeStr. Continue where you left off!',
+                      style: GoogleFonts.notoSansJp(
+                        fontSize: 11,
+                        color: Colors.white.withOpacity(0.85),
+                      ),
+                    ),
+                    if (streak > 1) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        '${_streakEmoji(streak)} $streak-day streak at risk!',
+                        style: GoogleFonts.notoSansJp(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Resume →',
+                  style: GoogleFonts.notoSansJp(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
 }

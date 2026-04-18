@@ -180,7 +180,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
             child: Center(
               child: Text(
                 '$_correct / $_total',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                   color: widget.accentColor,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -236,9 +236,9 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Card ${_index + 1} of ${_shuffled.length}',
-                style: GoogleFonts.notoSans(fontSize: 12, color: AppTheme.inkLight)),
+                style: GoogleFonts.notoSansJp(fontSize: 12, color: AppTheme.inkLight)),
             Text('${(progress * 100).round()}%',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 12, color: widget.accentColor, fontWeight: FontWeight.w600)),
           ],
         ),
@@ -274,7 +274,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Draw this character:',
-                    style: GoogleFonts.notoSans(fontSize: 11, color: AppTheme.inkLight)),
+                    style: GoogleFonts.notoSansJp(fontSize: 11, color: AppTheme.inkLight)),
                 Text(
                   isKanji
                       ? '"${_current.meaning}" (${_current.romaji})'
@@ -292,7 +292,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text('${_dots.length} dots',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                     fontSize: 11, color: widget.accentColor, fontWeight: FontWeight.w600)),
           ),
         ],
@@ -368,7 +368,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
           if (_showAnswer) ...[
             Text(
               _current.japanese,
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                 fontSize: isKanji ? 52 : 62,
                 color: _revealed ? AppTheme.red : widget.accentColor,
                 fontWeight: FontWeight.w400,
@@ -378,7 +378,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
             const SizedBox(height: 4),
             Text(
               _current.romaji,
-              style: GoogleFonts.notoSans(
+              style: GoogleFonts.notoSansJp(
                 fontSize: 11,
                 color: AppTheme.inkLight,
                 fontWeight: FontWeight.w500,
@@ -390,7 +390,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Text(
                   _current.meaning,
-                  style: GoogleFonts.notoSans(
+                  style: GoogleFonts.notoSansJp(
                     fontSize: 9,
                     color: AppTheme.inkLight.withOpacity(0.7),
                   ),
@@ -412,7 +412,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 'Draw to\nreveal',
-                style: GoogleFonts.notoSans(
+                style: GoogleFonts.notoSansJp(
                   fontSize: 11,
                   color: AppTheme.inkLight,
                   height: 1.4,
@@ -439,7 +439,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
               side: const BorderSide(color: AppTheme.border),
               padding: const EdgeInsets.symmetric(vertical: 11),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              textStyle: GoogleFonts.notoSans(fontSize: 13),
+              textStyle: GoogleFonts.notoSansJp(fontSize: 13),
             ),
           ),
         ),
@@ -454,7 +454,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
               side: const BorderSide(color: AppTheme.border),
               padding: const EdgeInsets.symmetric(vertical: 11),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              textStyle: GoogleFonts.notoSans(fontSize: 13),
+              textStyle: GoogleFonts.notoSansJp(fontSize: 13),
             ),
           ),
         ),
@@ -471,7 +471,7 @@ class _ConnectDotsScreenState extends State<ConnectDotsScreen>
               padding: const EdgeInsets.symmetric(vertical: 11),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 0,
-              textStyle: GoogleFonts.notoSans(fontSize: 13, fontWeight: FontWeight.w600),
+              textStyle: GoogleFonts.notoSansJp(fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ),
         ),
