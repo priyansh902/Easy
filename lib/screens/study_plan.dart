@@ -17,6 +17,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
   int _perDay = 25;
   final List<int> _paceOptions = [10, 25, 50, 100];
   late List<List<KanjiEntry>> _plan;
+  
   Set<int> _completedDays = {};
 
   @override
@@ -27,7 +28,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
     _completedDays = store.completedDays;
     _plan = buildDayPlan(_perDay);
     // Listen for any progress changes and rebuild
-    
+
     ProgressStore.instance.addListener(_onProgressChanged);
   }
 
