@@ -27,7 +27,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
     _perDay = store.studyPace;
     _completedDays = store.completedDays;
     _plan = buildDayPlan(_perDay);
-    // Listen for any progress changes and rebuild
+    
 
     ProgressStore.instance.addListener(_onProgressChanged);
   }
