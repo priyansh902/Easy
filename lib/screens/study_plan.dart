@@ -102,6 +102,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
   }
 
   // Dominant JLPT level for a day
+  // If there's a tie, pick the harder level to encourage focus on more difficult kanji.
   int _dominantLevel(List<KanjiEntry> day) {
     final counts = <int, int>{};
     for (final k in day) {
