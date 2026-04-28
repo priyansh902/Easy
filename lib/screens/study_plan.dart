@@ -55,7 +55,7 @@ class _StudyPlanScreenState extends State<StudyPlanScreen> {
     });
   }
 
-  // Reset progress 
+  // Reset progress with
   Future<void> _confirmReset() async {
     final confirmed = await showDialog<bool>(
       context: context,
