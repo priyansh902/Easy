@@ -21,7 +21,7 @@ class ProgressStore {
   }
 
   // ── Notify listeners on change ─────────────────────────────
-  // Simple callback so UI can rebuild when anything changes
+  // Simple callback so UI can rebuild when anything changes in the store.
   final List<void Function()> _listeners = [];
   void addListener(void Function() cb)    => _listeners.add(cb);
   void removeListener(void Function() cb) => _listeners.remove(cb);
